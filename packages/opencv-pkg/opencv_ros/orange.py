@@ -5,9 +5,9 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 
-class IMG(Node):
+class Orange(Node):
     def __init__(self):
-        super().__init__('example_node')
+        super().__init__('orange_node')
         self.bridge = CvBridge()
         self.img_sub = self.create_subscription(
             Image,
@@ -15,7 +15,7 @@ class IMG(Node):
             self.image_callback,
             10
         )
-        self.img_publisher = self.create_publisher(Image, 'processed_image', 10)
+        self.img_publisher = self.create_publisher(Image, 'orange_detection', 10)
 
     def image_callback(self, msg):
         try:
@@ -33,7 +33,7 @@ class IMG(Node):
             mask = cv2.inRange(self.cv_image, lower_bound, upper_bound)
             orange_img = cv2.bitwise_and(self.cv_image, self.cv_image, mask=mask)
             gray_img = cv2.cvtColor(orange_img, cv2.COLOR_BGR2GRAY)
-            _, binary_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY) 
+            _, binary_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU) 
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11))
             # 侵蝕後膨脹降低雜訊
             binary_img = cv2.erode(binary_img, kernel)
@@ -62,7 +62,7 @@ class IMG(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = IMG()
+    node = Orange()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

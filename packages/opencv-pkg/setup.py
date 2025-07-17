@@ -13,7 +13,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'example = opencv_ros.example:main',  # Example entry point
+            'orange = opencv_ros.orange:main',  # Example entry point
+            'coffee = opencv_ros.coffee:main',  # Coffee entry point
         ],
     },
     install_requires=['setuptools', 'opencv-python', 'cv_bridge', 'rclpy', 'numpy'],

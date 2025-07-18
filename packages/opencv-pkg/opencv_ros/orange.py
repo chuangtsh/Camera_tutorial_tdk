@@ -15,16 +15,25 @@ class Orange(Node):
             self.image_callback,
             10
         )
+        self.depth_sub = self.create_subscription(
+            Image,
+            "/camera/camera/depth/image_rect_raw",
+            self.depth_callback,
+            10
+        )
         self.img_publisher = self.create_publisher(Image, 'orange_detection', 10)
 
     def image_callback(self, msg):
         try:
             self.cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-            #self.get_logger().info('Received an image!')
             self.publish_processed_image()
         except Exception as e:
             self.get_logger().error(f'Error converting image: {e}')
-
+    def depth_callback(self, msg):
+        try:
+            self.cv_depth = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+        except Exception as e:
+            self.get_logger().error(f'Error converting depth image: {e}')
     def publish_processed_image(self):
         try:
             # 創一個篩選出橘色的mask
@@ -49,13 +58,15 @@ class Orange(Node):
                 cx = x + w // 2
                 cy = y + h // 2
 
+                depth_value = self.cv_depth[y, x] * 0.1
+                self.get_logger().info(f"Depth at ({x}, {y}): {depth_value:.3f} cm")
+
                 # 在圖上標記中心點
                 cv2.circle(self.cv_image, (cx, cy), 3, (0, 0, 255), -1)
                 cv2.putText(self.cv_image, f"({cx},{cy})", (cx + 10, cy - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-            msg = self.bridge.cv2_to_imgmsg(self.cv_image, encoding='bgr8')
+            msg = self.bridge.cv2_to_imgmsg(orange_img, encoding='bgr8')
             self.img_publisher.publish(msg)
-            #self.get_logger().info('Processed image published!')
         except Exception as e:
             self.get_logger().error(f'Error publishing processed image: {e}')
 

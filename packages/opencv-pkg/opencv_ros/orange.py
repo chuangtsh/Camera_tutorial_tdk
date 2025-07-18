@@ -65,7 +65,7 @@ class Orange(Node):
                 cv2.circle(self.cv_image, (cx, cy), 3, (0, 0, 255), -1)
                 cv2.putText(self.cv_image, f"({cx},{cy})", (cx + 10, cy - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-            msg = self.bridge.cv2_to_imgmsg(orange_img, encoding='bgr8')
+            msg = self.bridge.cv2_to_imgmsg(self.cv_image, encoding='bgr8')
             self.img_publisher.publish(msg)
         except Exception as e:
             self.get_logger().error(f'Error publishing processed image: {e}')

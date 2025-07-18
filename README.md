@@ -1,5 +1,5 @@
 # Camera Tutorial For TDK
-This is the example realense camera code for TDK 2025
+This is the example realense camera code for TDK 2025, including orange detection and coffee menu detection
 ## Final Result：
 ![image](https://github.com/yuhsiang1117/Camera_tutorial_tdk/blob/master/asset/images/result.gif)
 

@@ -11,13 +11,13 @@ class Orange(Node):
         self.bridge = CvBridge()
         self.img_sub = self.create_subscription(
             Image,
-            "/camera/camera/color/image_raw",
+            "/camera/color/image_raw",
             self.image_callback,
             10
         )
         self.depth_sub = self.create_subscription(
             Image,
-            "/camera/camera/depth/image_rect_raw",
+            "/camera/depth/image_rect_raw",
             self.depth_callback,
             10
         )

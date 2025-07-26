@@ -64,7 +64,7 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=24
     volumes:
-        - $PWD/../packages/opencv-pkg:/home/opencv/vision-ws/src/opencv_ros
+        - $PWD/../packages:/home/opencv/vision-ws/src
     command: |
       bash -c "
       colcon build &&

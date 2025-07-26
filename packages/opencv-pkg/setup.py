@@ -14,11 +14,13 @@ setup(
     entry_points={
         'console_scripts': [
             'orange = opencv_ros.orange:main',  # Example entry point
-            'coffee = opencv_ros.coffee:main',  # Coffee entry point
+            # 'coffee = opencv_ros.coffee:main',  # Coffee entry point
+            'get_coffee_image = opencv_ros.get_coffee_image:main',  # Photo capture service
+            'photo_client = opencv_ros.photo_client:main',  # Photo service client
         ],
     },
     install_requires=['setuptools', 'opencv-python', 'cv_bridge', 'rclpy', 'numpy'],
     zip_safe=True,
-    maintainer='CYH',
-    description='TDK camera opencv example',
+    maintainer='Kesler',
+    description='TDK image processing',
 )

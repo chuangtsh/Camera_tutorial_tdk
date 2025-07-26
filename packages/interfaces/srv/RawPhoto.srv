@@ -1,0 +1,5 @@
+# Request
+int32 status
+---
+# Response
+bool photo_taken

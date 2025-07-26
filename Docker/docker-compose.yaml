@@ -62,7 +62,7 @@ services:
     container_name: tdk-opencv
     environment:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=42
+      - ROS_DOMAIN_ID=24
     volumes:
         - $PWD/../packages/opencv-pkg:/home/opencv/vision-ws/src/opencv_ros
     command: |

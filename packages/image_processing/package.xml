@@ -3,10 +3,11 @@
 <package format="3">
   <name>image_processing</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="opencv@todo.todo">opencv</maintainer>
-  <license>TODO: License declaration</license>
+  <description>subscribe to image topic and process the photo</description>
+  <maintainer email="chuangtsh0526@gmail.com">opencv</maintainer>
+  <license>Apache License 2.0</license>
 
+  <buildtool_depend>ament_python</buildtool_depend>
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2_ros</depend>

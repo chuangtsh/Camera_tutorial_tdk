@@ -11,15 +11,16 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'opencv-python', 'cv_bridge', 'rclpy', 'numpy'],
     zip_safe=True,
-    maintainer='opencv',
-    maintainer_email='opencv@todo.todo',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='Kesler',
+    maintainer_email='chuangtsh0526@gmail.com',
+    description='subscribe to image topic and process the photo',
+    license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'get_coffee_photo = image_processing.get_coffee_photo:main'
         ],
     },
 )

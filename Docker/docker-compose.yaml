@@ -72,3 +72,28 @@ services:
       ros2 run opencv_ros orange
       "
   
+  usbcam:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: usbcam
+    <<: *common-env
+    image: vision-tdk:usbcam
+    container_name: tdk-usbcam
+    privileged: true
+    devices:
+      - /dev:/dev
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /dev:/dev
+    environment:
+      - ROS_DOMAIN_ID=24
+    network_mode: host
+    # command: bash
+    command: |
+      bash -c "
+      source /opt/ros/humble/setup.bash
+      colcon build
+      source install/setup.bash
+      ros2 run usb_cam usb_cam_node_exe
+      "

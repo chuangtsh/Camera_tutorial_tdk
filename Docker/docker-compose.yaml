@@ -3,10 +3,89 @@ x-common-env: &common-env
   tty: true
   stdin_open: true
   stop_grace_period: 1s
+name: cameras
 
 # Services
-# for RPi, we only need the last package
 services:
+  realsense:
+    image: chrismatthieu/rpi5-ros2-realsense2
+    container_name: tdk-realsense-input
+    <<: *common-env
+    privileged: true
+    network_mode: host
+    devices:
+      - /dev/bus/usb/005/003:/dev/bus/usb/005/003
+    volumes:
+      # - /dev:/dev
+      - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video1
+      - /dev/video2:/dev/video2
+      - /dev/video3:/dev/video3
+      - /dev/video4:/dev/video4
+      - /dev/video5:/dev/video5
+      # - $PWD/../packages/realsense-pkg:/home/realsense/vision-ws/src/realsense-ros
+      # the package inside is pretty terrible to look at, but
+      # rs_launch.py is at /opt/ros/humble/share/realsense2_camera/launch/rs_launch.py
+    environment:
+      # - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=24
+    device_cgroup_rules:
+      - "c 81:* rmw"
+      - "c 189:* rmw"
+    command: |
+      bash -c "
+      ros2 launch realsense2_camera rs_launch.py
+      "
+  usbcam:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: usbcam
+    <<: *common-env
+    image: vision-tdk:usbcam
+    container_name: tdk-usbcam-input
+    privileged: true
+    devices:
+      - /dev/bus/usb/002/004:/dev/bus/usb/002/004
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /dev/video6:/dev/video6
+      - /dev/video7:/dev/video7
+      # - /dev:/dev
+    environment:
+      - ROS_DOMAIN_ID=24
+    network_mode: host
+    # command: bash
+    command: |
+      bash -c "
+      source /opt/ros/humble/setup.bash
+      colcon build
+      source install/setup.bash
+      ros2 run usb_cam usb_cam_node_exe --ros-args -p video_device:=/dev/video6
+      "
+
+  opencv:
+    build:
+      context: .
+      target: opencv
+      args:
+        USER: opencv
+    <<: *common-env
+    network_mode: host
+    image: vision-tdk:opencv
+    container_name: tdk-opencv
+    environment:
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=24
+    volumes:
+        - $PWD/../packages:/home/opencv/vision-ws/src
+    command: |
+      bash -c "
+      colcon build &&
+      source install/setup.bash &&
+      ros2 run opencv_ros orange
+      "
+  
   # realsense: 
   #   build:
   #     context: .
@@ -49,51 +128,3 @@ services:
   #     # - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
   #     - ROS_DOMAIN_ID=42
   #   command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml address:=localhost port:=8765
-
-  opencv:
-    build:
-      context: .
-      target: opencv
-      args:
-        USER: opencv
-    <<: *common-env
-    network_mode: host
-    image: vision-tdk:opencv
-    container_name: tdk-opencv
-    environment:
-      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=24
-    volumes:
-        - $PWD/../packages:/home/opencv/vision-ws/src
-    command: |
-      bash -c "
-      colcon build &&
-      source install/setup.bash &&
-      ros2 run opencv_ros orange
-      "
-  
-  usbcam:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: usbcam
-    <<: *common-env
-    image: vision-tdk:usbcam
-    container_name: tdk-usbcam
-    privileged: true
-    devices:
-      - /dev:/dev
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - /dev:/dev
-    environment:
-      - ROS_DOMAIN_ID=24
-    network_mode: host
-    # command: bash
-    command: |
-      bash -c "
-      source /opt/ros/humble/setup.bash
-      colcon build
-      source install/setup.bash
-      ros2 run usb_cam usb_cam_node_exe
-      "
